@@ -1,7 +1,7 @@
 package goan
 
 import (
-    gin "github.com/gin-gonic/gin"
+	gin "github.com/gin-gonic/gin"
 )
 
 //CheckAuthentication will check the user's authentication token in either the
@@ -12,8 +12,8 @@ func CheckAuthentication(config *Config) gin.HandlerFunc {
 		if passedAuth == "" {
 			passedAuth = c.DefaultQuery("auth", "")
 		}
-        
-        if passedAuth == config.AuthenticationToken {
+
+		if passedAuth == config.AuthenticationToken {
 			c.Set("Authenticated", true)
 		} else {
 			c.Set("Authenticated", false)
