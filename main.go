@@ -18,7 +18,10 @@ import (
 //Main is the entry point for the application. It will start the GIN server
 func main() {
     fmt.Printf("\nLoading...\n")
-    config := goan.LoadConfig()
+    config, err := goan.LoadConfig()
+    if err != nil {
+        panic(err)
+    }
     if config.DatabaseType == "mongo" {
         defer config.DatabaseMongo.Close()
     }

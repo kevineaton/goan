@@ -26,9 +26,9 @@ type DataEntry struct {
 }
 
 //EntryReturnHelper formats the return of a DataEntry object back to the client
-func (dataEntry DataEntry) EntryReturnHelper () gin.H {
+func (dataEntry DataEntry) EntryReturnHelper() gin.H {
     ret :=gin.H{
-        "type": dataEntry.EntryType,
+        "category": dataEntry.EntryType,
         "reference": dataEntry.Reference,
         "created": dataEntry.EntryCreated,
         "notes": dataEntry.Notes,

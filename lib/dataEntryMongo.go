@@ -23,3 +23,9 @@ func GetEntriesByTypeMongo(entryType string, config *Config) ([]DataEntry, error
     }
     return matches, err
 }
+
+func DeleteAllTestingEntriesMongo(entryType string, config *Config) error {
+    collection := config.DatabaseMongo.DB(config.DatabaseName).C("entries")
+    _, err := collection.RemoveAll(bson.M{"entryType": entryType})
+    return err
+}
