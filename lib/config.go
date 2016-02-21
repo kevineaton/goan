@@ -5,6 +5,7 @@ import (
     "math/rand"
     "fmt"
     "crypto/md5"
+    "errors"
     
     "gopkg.in/mgo.v2"
 )
@@ -24,7 +25,7 @@ type Config struct {
 }
 
 //LoadConfig will load up a new configuration struct with sane defaults if none provided
-func LoadConfig() Config {
+func LoadConfig() (Config, error) {
 	config := Config{}
 	config.AuthenticationToken = os.Getenv("GOAN_AUTHTOKEN")
 	config.Port = os.Getenv("GOAN_API_PORT")
@@ -35,12 +36,13 @@ func LoadConfig() Config {
     config.DatabasePort = os.Getenv("GOAN_DBPORT")
     config.DatabaseUser = os.Getenv("GOAN_DBUSER")
     config.DatabasePassword = os.Getenv("GOAN_DBPASSWORD")
+    goanMode := os.Getenv("GOAN_MODE")
 
 	if config.AuthenticationToken == "" {
 		//randomize it with bcrypt on each server start up and prompt the user to specify one
 		r1 := rand.Intn(100000000)
 		r2 := rand.Intn(20000000)
-		plain := fmt.Sprintf("%s-%d-%d", "go-esperanto", r1, r2)
+		plain := fmt.Sprintf("%s-%d-%d", "go-goan-kv", r1, r2)
 		h := md5.New()
 		h.Write([]byte(plain))
 		code := string(fmt.Sprintf("%x", h.Sum(nil)))
@@ -78,15 +80,20 @@ func LoadConfig() Config {
         if config.DatabaseName == "" {
             config.DatabaseName = "goan"
         }
-        session, err := mgo.Dial(config.DatabaseURL)
-        if err != nil {
-            panic("Could not connect to database...")
+        if goanMode != "testing" {
+            session, err := mgo.Dial(config.DatabaseURL)
+            if err != nil {
+                return config, err
+            }
+            session.SetMode(mgo.Monotonic, true)
+            config.DatabaseMongo = *session
+        }else {
+            return config, errors.New("testing mode")
         }
-        session.SetMode(mgo.Monotonic, true)
-        config.DatabaseMongo = *session
+        
     } else if config.DatabaseType == "mysql" {
         
     }
 
-	return config
+	return config, nil
 }
