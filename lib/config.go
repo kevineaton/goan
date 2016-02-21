@@ -9,6 +9,7 @@ import (
     "gopkg.in/mgo.v2"
 )
 
+//Config holds basic configuration options for the application, including database settings and authentication
 type Config struct {
 	AuthenticationToken string
 	Port                string

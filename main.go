@@ -15,6 +15,7 @@ import (
     goan "github.com/kevineaton/goan/lib"
 )
 
+//Main is the entry point for the application. It will start the GIN server
 func main() {
     fmt.Printf("\nLoading...\n")
     config := goan.LoadConfig()
@@ -28,6 +29,10 @@ func main() {
     {
         v1.POST("/", goan.CheckAuthentication(&config), func(c *gin.Context) {
             goan.SaveEntry(c, &config)
+        })
+        
+        v1.GET("/:entryType", goan.CheckAuthentication(&config), func(c *gin.Context){
+            goan.GetEntriesByType(c.Param("entryType"), c, &config)
         })
     }
 	
