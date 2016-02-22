@@ -12,13 +12,13 @@ import (
 )
 
 func Test_Middleware_Default_Bad(t *testing.T) {
-	config, _ := LoadConfig()
+    config, _ := LoadConfig()
 	router := gin.New()
 	router.Use(CheckAuthentication(&config))
 	router.GET("/?auth=reallybadauth", func(c *gin.Context) {
 		assert.False(t, c.MustGet("Authenticated").(bool))
 	})
-	_ = performRequest(router, "GET", "/?auth=reallybadauth")
+	_ = performRequest(router, "GET", "/testing?auth=reallybadauth")
 }
 
 func Test_Middleware_Default(t *testing.T) {

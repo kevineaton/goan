@@ -47,6 +47,9 @@ func LoadConfig() (Config, error) {
 		h.Write([]byte(plain))
 		code := string(fmt.Sprintf("%x", h.Sum(nil)))
 		config.AuthenticationToken = code
+        fmt.Printf("\n\t----------------------------------------------")
+        fmt.Printf("\n\t-   Auth: %s   -", code)
+        fmt.Printf("\n\t----------------------------------------------\n\n")
 	}
 
 	if config.Port == "" {

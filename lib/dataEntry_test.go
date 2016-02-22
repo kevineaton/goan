@@ -1,13 +1,10 @@
 package goan
 
 import (
-	_ "fmt"
-	_ "math/rand"
 	"os"
 	"testing"
 	"time"
 
-	_ "github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 	"gopkg.in/mgo.v2/bson"
 )

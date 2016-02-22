@@ -1,9 +1,7 @@
 package goan
 
 import (
-	"fmt"
-	gin "github.com/gin-gonic/gin"
-	"reflect"
+	"github.com/gin-gonic/gin"
 	"time"
 
 	"gopkg.in/mgo.v2/bson"
@@ -58,7 +56,6 @@ func SaveEntry(c *gin.Context, config *Config) {
 				panic(err)
 			} else {
 				dataRet := data.EntryReturnHelper()
-				fmt.Println(reflect.TypeOf(dataRet))
 				c.JSON(200, gin.H{"status": "inserted", "data": dataRet})
 			}
 		}
@@ -78,7 +75,6 @@ func GetEntriesByType(entryType string, c *gin.Context, config *Config) {
 				//loop and build
 				ret := []gin.H{}
 				for _, entry := range matches {
-					fmt.Printf("\n\tFound: %s", entry.EntryType)
 					ret = append(ret, entry.EntryReturnHelper())
 				}
 				count := len(matches)
