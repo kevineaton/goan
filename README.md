@@ -1,4 +1,5 @@
 # goan - GoAnalytics
+[![Build Status](https://travis-ci.org/kevineaton/goan.svg?branch=master)](https://travis-ci.org/kevineaton/goan)
 [![GoDoc](https://godoc.org/github.com/kevineaton/goan/lib?status.svg)](https://godoc.org/github.com/kevineaton/goan/lib)
 v. 0.0.1
 
