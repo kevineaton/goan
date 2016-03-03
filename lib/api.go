@@ -71,6 +71,23 @@ func ParseSort(c *gin.Context, field string) (Sort) {
     sort.Start, _ = strconv.Atoi(c.DefaultQuery("start", "0"))
     sort.Count, _ = strconv.Atoi(c.DefaultQuery("count", "100000"))
     sort.Field = c.DefaultQuery("sort", field)
-    sort.Direction = c.DefaultQuery("sortDirection", "asc")
+    sort.Direction = c.DefaultQuery("sortDirection", "")
     return sort
+}
+
+//ModifySortForMongo takes a sort object and modifes it for use in the Mongo API
+func (sort *Sort) ModifySortForMongo() {
+    if sort.Direction == "desc" || sort.Direction == "DESC" {
+        sort.Direction = "-"
+    } else {
+        sort.Direction = ""
+    }
+    
+    if sort.Field == "created" {
+        sort.Field = "entryCreated"
+    }
+    
+    if sort.Field == "id" || sort.Field == "MongoID" {
+        sort.Field = "_id"
+    }
 }

@@ -2,6 +2,7 @@ package goan
 
 import (
     "time"
+    "fmt"
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -25,7 +26,11 @@ func GetEntriesByTypeMongo(entryType string, from time.Time, to time.Time, sort 
             "$lt": to,
         },
     }
-	err := collection.Find(query).All(&matches)
+    //modify the sort
+    sort.ModifySortForMongo()
+    sortString := fmt.Sprintf("%s%s", sort.Direction, sort.Field)
+    
+	err := collection.Find(query).Limit(sort.Count).Skip(sort.Start).Sort(sortString).All(&matches)
 	if err != nil {
 		panic("yikes")
 	}
