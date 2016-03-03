@@ -57,7 +57,15 @@ func (suite *DataEntryTestMongoSuite) Test_DataEntry_MongoSave() {
 	if err != nil {
 		suite.False(true)
 	}
-	matches, err := GetEntriesByTypeMongo("testing-mongo", &suite.Config)
+    from, _ := time.Parse("2006-01-02", "2016-01-01")
+    to, _ := time.Parse("2006-01-02", "2020-01-01")
+    sort := Sort{
+        Start: 0,
+        Count: 1000,
+        Field: "date",
+        Direction: "asc",
+    }
+	matches, err := GetEntriesByTypeMongo("testing-mongo", from, to, sort, &suite.Config)
 	if err != nil {
 		suite.False(true)
 	}

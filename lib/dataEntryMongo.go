@@ -1,6 +1,7 @@
 package goan
 
 import (
+    "time"
 	"gopkg.in/mgo.v2/bson"
 )
 
@@ -14,10 +15,17 @@ func SaveEntryMongo(data *DataEntry, config *Config) error {
 }
 
 //GetEntriesByTypeMongo returns a slice of DataEntry objects by the specified filters
-func GetEntriesByTypeMongo(entryType string, config *Config) ([]DataEntry, error) {
+func GetEntriesByTypeMongo(entryType string, from time.Time, to time.Time, sort Sort, config *Config) ([]DataEntry, error) {
 	collection := config.DatabaseMongo.DB(config.DatabaseName).C("entries")
 	matches := []DataEntry{}
-	err := collection.Find(bson.M{"entryType": entryType}).All(&matches)
+    query := bson.M{
+        "entryType": entryType,
+        "entryCreated": bson.M{
+            "$gte": from,
+            "$lt": to,
+        },
+    }
+	err := collection.Find(query).All(&matches)
 	if err != nil {
 		panic("yikes")
 	}

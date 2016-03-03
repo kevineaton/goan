@@ -63,12 +63,12 @@ func SaveEntry(c *gin.Context, config *Config) {
 }
 
 //GetEntriesByType gets a list of all entries filtered by a specific type
-func GetEntriesByType(entryType string, c *gin.Context, config *Config) {
+func GetEntriesByType(entryType string, from time.Time, to time.Time, sort Sort, c *gin.Context, config *Config) {
 	if !c.MustGet("Authenticated").(bool) {
 		c.JSON(401, gin.H{"status": "Unauthorized"})
 	} else {
 		if config.DatabaseType == "mongo" {
-			matches, err := GetEntriesByTypeMongo(entryType, config)
+			matches, err := GetEntriesByTypeMongo(entryType, from, to, sort, config)
 			if err != nil {
 				c.JSON(500, gin.H{"status": "There was a problem"})
 			} else {

@@ -1,5 +1,6 @@
 # goan - GoAnalytics
 [![GoDoc](https://godoc.org/github.com/kevineaton/goan/lib?status.svg)](https://godoc.org/github.com/kevineaton/goan/lib)
+v. 0.0.1
 
 A very basic analytics microservice that uses MongoDB or MySQL (soon) to store basic events that can be queried.
 
