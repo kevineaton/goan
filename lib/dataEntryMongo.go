@@ -37,6 +37,19 @@ func GetEntriesByTypeMongo(entryType string, from time.Time, to time.Time, sort 
 	return matches, err
 }
 
+//GetDistinctEntriesMongo gets the distinct entry types that have been input
+func GetDistinctEntriesMongo(config *Config) ([]string, error) {
+    collection := config.DatabaseMongo.DB(config.DatabaseName).C("entries")
+    var result []string
+    err := collection.Find(bson.M{}).Distinct("entryType", &result)
+    if err != nil {
+		panic("yikes")
+	}
+	return result, err
+}
+
+
+
 //DeleteAllTestingEntriesMongo removes all entries of a specific type. While it can be used for all removals,
 //including non-testing, you probably don't really want to delete all of your entries
 func DeleteAllTestingEntriesMongo(entryType string, config *Config) error {

@@ -83,3 +83,21 @@ func GetEntriesByType(entryType string, from time.Time, to time.Time, sort Sort,
 		}
 	}
 }
+
+//GetDistinctEntries gets the distinct entries 
+func GetDistinctEntries(c *gin.Context, config *Config) {
+	if !c.MustGet("Authenticated").(bool) {
+		c.JSON(401, gin.H{"status": "Unauthorized"})
+	} else {
+		if config.DatabaseType == "mongo" {
+			matches, err := GetDistinctEntriesMongo(config)
+			if err != nil {
+				c.JSON(500, gin.H{"status": "There was a problem"})
+			} else {
+				//loop and build
+				count := len(matches)
+				c.JSON(200, gin.H{"status": "OK", "count": count, "data": matches})
+			}
+		}
+	}
+}

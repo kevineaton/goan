@@ -44,7 +44,7 @@ func LoadAPI() (*gin.Engine, *Config){
         //Get all the unique types in the db
         v1.GET("/types", CheckAuthentication(&config), func(c *gin.Context) {
             //stub to get all of the types
-            c.JSON(501, gin.H{"status":"Not Implemented Yet"})
+            GetDistinctEntries(c, &config)
         })
 
         //Get the entries based upon the type

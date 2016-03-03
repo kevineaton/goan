@@ -79,3 +79,50 @@ func (suite *DataEntryTestMongoSuite) Test_DataEntry_MongoSave() {
 
 	suite.True(found)
 }
+
+func (suite *DataEntryTestMongoSuite) Test_DataEntry_MongoDistinct() {
+	de := DataEntry{}
+	r1 := rand.Intn(100000000)
+	current := time.Now()
+	de.SQLID = 0
+	de.MongoID = bson.NewObjectId()
+	de.EntryType = "testing-mongo-distinct-1"
+	de.Reference = fmt.Sprintf("%d", r1)
+	de.EntryCreated = current
+	de.Notes = "Sample Notes"
+
+	err := SaveEntryMongo(&de, &suite.Config)
+	if err != nil {
+		suite.False(true)
+	}
+    
+    de2 := DataEntry{}
+	de2.SQLID = 0
+	de2.MongoID = bson.NewObjectId()
+	de2.EntryType = "testing-mongo-distinct-2"
+	de2.Reference = fmt.Sprintf("%d", r1)
+	de2.EntryCreated = current
+	de2.Notes = "Sample Notes"
+    err = SaveEntryMongo(&de2, &suite.Config)
+	if err != nil {
+		suite.False(true)
+	}
+    
+	matches, err := GetDistinctEntriesMongo(&suite.Config)
+	if err != nil {
+		suite.False(true)
+	}
+	found1 := false
+    found2 := false
+	for _, entry := range matches {
+		if entry == "testing-mongo-distinct-1" && !found1 { //check to see if this one is the first group and the group hasn't been found before
+			found1 = true
+		}
+        if entry == "testing-mongo-distinct-2" && !found2 { //ditto
+			found2 = true
+		}
+	}
+
+	suite.True(found1)
+    suite.True(found2)
+}
