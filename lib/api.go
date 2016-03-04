@@ -5,7 +5,7 @@ import (
 	"fmt"
     "strconv"
     "time"
-	gin "github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin"
 )
 
 //Sort holds a structure of sort options
@@ -35,6 +35,7 @@ func LoadAPI() (*gin.Engine, *Config){
 
 	//startup the API and setup the routes
 	router := gin.Default()
+    router.Use(CORSMiddleware())
 	v1 := router.Group("/v1")
 	{
         //Get basic status
@@ -62,6 +63,8 @@ func LoadAPI() (*gin.Engine, *Config){
             GetEntriesByType(c.Param("entryType"), fromStamp, toStamp, sort, c, &config)
 		})
 	}
+    
+    
 
 	fmt.Printf("\nListening on port %s\n", config.Port)
     router.Run(config.Port)
