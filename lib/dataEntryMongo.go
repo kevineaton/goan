@@ -32,7 +32,7 @@ func GetEntriesByTypeMongo(entryType string, from time.Time, to time.Time, sort 
     
 	err := collection.Find(query).Limit(sort.Count).Skip(sort.Start).Sort(sortString).All(&matches)
 	if err != nil {
-		panic("yikes")
+		LogWarning.Println("There was a problem finding documents for " + entryType)
 	}
 	return matches, err
 }
@@ -43,7 +43,7 @@ func GetDistinctEntriesMongo(config *Config) ([]string, error) {
     var result []string
     err := collection.Find(bson.M{}).Distinct("entryType", &result)
     if err != nil {
-		panic("yikes")
+		LogWarning.Println("There was a problem finding unique entry types")
 	}
 	return result, err
 }

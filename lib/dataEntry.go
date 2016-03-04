@@ -53,7 +53,7 @@ func SaveEntry(c *gin.Context, config *Config) {
 			err := SaveEntryMongo(&data, config)
 			if err != nil {
 				c.JSON(500, gin.H{"status": "Could not save that entry"})
-				panic(err)
+				LogWarning.Println("Invalid post, data not saved")
 			} else {
 				dataRet := data.EntryReturnHelper()
 				c.JSON(200, gin.H{"status": "inserted", "data": dataRet})

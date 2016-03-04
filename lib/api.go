@@ -19,9 +19,14 @@ type Sort struct {
 //LoadAPI is the entry point for the application. It will start the GIN server
 func LoadAPI() (*gin.Engine, *Config){
 	fmt.Printf("\nLoading API...\n")
+    
+    //logging first
+    SetupLogger()
+    
+    //Now DB stuff
 	config, err := LoadConfig()
 	if err != nil {
-        fmt.Printf("\n%v\n", err)
+        LogError.Println(err)
 		panic(err)
 	}
 	if config.DatabaseType == "mongo" {
