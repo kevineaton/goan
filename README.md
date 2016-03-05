@@ -1,6 +1,8 @@
 # goan - GoAnalytics
 [![Build Status](https://travis-ci.org/kevineaton/goan.svg?branch=master)](https://travis-ci.org/kevineaton/goan)
 [![GoDoc](https://godoc.org/github.com/kevineaton/goan/lib?status.svg)](https://godoc.org/github.com/kevineaton/goan/lib)
+[![Code Climate](https://codeclimate.com/github/kevineaton/goan/badges/gpa.svg)](https://codeclimate.com/github/kevineaton/goan)
+
 v. 0.2.1
 
 A very basic analytics microservice that uses MongoDB or MySQL (soon) to store basic events that can be queried.

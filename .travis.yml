@@ -3,3 +3,6 @@ go:
   - 1.5
 script: GIN_MODE=release go test ./lib
 services: mongodb
+addons:
+    code_climate:
+        repo_token: e6037145d9622d8d2c6e53dabde6bc0560033aa0ca4d8a90580457dd6cbe72d1
