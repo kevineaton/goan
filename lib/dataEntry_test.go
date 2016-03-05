@@ -1,45 +1,13 @@
 package goan
 
 import (
-	"os"
-	"testing"
 	"time"
 
-	"github.com/stretchr/testify/suite"
 	"gopkg.in/mgo.v2/bson"
 )
 
-type DataEntryTestSuite struct {
-	suite.Suite
-	Config Config
-}
 
-var originalDatabaseName string
-
-func (suite *DataEntryTestSuite) SetupSuite() {
-	originalDatabaseName = os.Getenv("GOAN_DBNAME")
-	_ = os.Setenv("GOAN_DBNAME", "testing-data")
-
-	con, err := LoadConfig()
-	if err != nil {
-		panic(err)
-	}
-	suite.Config = con
-}
-
-func (suite *DataEntryTestSuite) TearDownSuite() {
-	_ = os.Setenv("GOAN_DBNAME", originalDatabaseName)
-	if suite.Config.DatabaseType == "mongo" {
-		defer suite.Config.DatabaseMongo.Close()
-		DeleteAllTestingEntriesMongo("testing-data", &suite.Config)
-	}
-}
-
-func Test_DataEntrySuite(t *testing.T) {
-	suite.Run(t, new(DataEntryTestSuite))
-}
-
-func (suite *DataEntryTestSuite) Test_DataEntry_ReturnHelper() {
+func (suite *TestSuite) Test_DataEntry_ReturnHelper() {
 	de := DataEntry{}
 	de.SQLID = 0
 	de.MongoID = bson.NewObjectId()
@@ -58,4 +26,62 @@ func (suite *DataEntryTestSuite) Test_DataEntry_ReturnHelper() {
 	suite.False(exists)
 	_, exists = ret["MongoID"]
 	suite.False(exists)
+}
+
+func (suite *TestSuite) Test_DataEntry_CRUD() {
+	de := DataEntry{}
+	de.SQLID = 0
+	de.MongoID = bson.NewObjectId()
+	de.EntryType = "testing-data"
+	de.Reference = "TestingId"
+	de.EntryCreated = time.Now()
+	de.Notes = "Sample Notes"
+    
+
+	code,ret := SaveEntry(de.EntryType, de.Reference, de.Notes, &suite.Config, true)
+    suite.Equal(code, 200)
+    _, exists := ret["data"]
+    suite.True(exists)
+    
+    //get a whole bunch and see if we have it
+    //todo
+    fromStamp, _ := time.Parse("2006-01-02", "2015-11-06")
+    toStamp, _ := time.Parse("2006-01-02", "2020-01-08")
+    sort := ParseSort(nil, "created")
+    fetchCode, _ := GetEntriesByType("testing-data", fromStamp, toStamp, sort, &suite.Config, true)
+    suite.Equal(fetchCode, 200)
+}
+
+func (suite *TestSuite) Test_DataEntry_Distinct_Types() {
+	de := DataEntry{}
+	de.SQLID = 0
+	de.MongoID = bson.NewObjectId()
+	de.EntryType = "testing-data"
+	de.Reference = "TestingId"
+	de.EntryCreated = time.Now()
+	de.Notes = "Sample Notes"
+    
+
+	code, _ := SaveEntry(de.EntryType, de.Reference, de.Notes, &suite.Config, true)
+    suite.Equal(code, 200)
+    
+    disCode, _ := GetDistinctEntries(&suite.Config, true)
+    suite.Equal(disCode, 200)
+    
+}
+
+func (suite *TestSuite) Test_DataEntry_Bad_Auth() {
+    fromStamp, _ := time.Parse("2006-01-02", "2015-11-06")
+    toStamp, _ := time.Parse("2006-01-02", "2020-01-08")
+    sort := ParseSort(nil, "created")
+    
+	code, _ := SaveEntry("testing-data", "", "", &suite.Config, false)
+    suite.Equal(code, 401)
+    
+    code, _ = GetDistinctEntries(&suite.Config, false)
+    suite.Equal(code, 401)
+    
+    code, _ = GetEntriesByType("testing-data", fromStamp, toStamp, sort, &suite.Config, false)
+    suite.Equal(code, 401)
+    
 }

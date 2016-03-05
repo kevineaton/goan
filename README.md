@@ -1,7 +1,7 @@
 # goan - GoAnalytics
 [![Build Status](https://travis-ci.org/kevineaton/goan.svg?branch=master)](https://travis-ci.org/kevineaton/goan)
 [![GoDoc](https://godoc.org/github.com/kevineaton/goan/lib?status.svg)](https://godoc.org/github.com/kevineaton/goan/lib)
-v. 0.2.0
+v. 0.2.1
 
 A very basic analytics microservice that uses MongoDB or MySQL (soon) to store basic events that can be queried.
 
@@ -52,7 +52,6 @@ To test with a local mongodb installed (environment variables can be specified o
 - [X] Implement better logging
 - [X] Implement CORS
 - [ ] Add MySQL support
-- [ ] Add Gin unit testing for better coverage
 - [ ] Put Dockerfile in source for easier deploy
 - [ ] ???
 - [ ] Profit!

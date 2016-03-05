@@ -2,10 +2,13 @@
 package main
 
 import (
+    "fmt"
 	goan "github.com/kevineaton/goan/lib"
 )
 
 //Main is the entry point for the application. It will start the GIN server
 func main() {
-    goan.LoadAPI()
+    router, config := goan.LoadAPI()
+    fmt.Printf("\nListening on port %s\n", config.Port)
+    router.Run(config.Port)
 }

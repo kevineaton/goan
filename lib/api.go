@@ -44,30 +44,33 @@ func LoadAPI() (*gin.Engine, *Config){
         })
         //Save an entry
 		v1.POST("/", CheckAuthentication(&config), func(c *gin.Context) {
-			SaveEntry(c, &config)
+			authenticated := c.MustGet("Authenticated").(bool)
+            entryType := c.DefaultPostForm("type", "General")
+            reference := c.DefaultPostForm("reference", "")
+            notes := c.DefaultPostForm("notes", "")
+            code, json := SaveEntry(entryType, reference, notes, &config, authenticated)
+            c.JSON(code, json)
 		})
         
         //Get all the unique types in the db
         v1.GET("/types", CheckAuthentication(&config), func(c *gin.Context) {
-            //stub to get all of the types
-            GetDistinctEntries(c, &config)
+            authenticated := c.MustGet("Authenticated").(bool)
+            code, json := GetDistinctEntries(&config, authenticated)
+            c.JSON(code, json)
         })
 
         //Get the entries based upon the type
 		v1.GET("/types/:entryType", CheckAuthentication(&config), func(c *gin.Context) {
+            authenticated := c.MustGet("Authenticated").(bool)
             from := c.DefaultQuery("from", "1969-01-01")
             to := c.DefaultQuery("to", "2020-12-31")
             fromStamp, _ := time.Parse("2006-01-02", from)
             toStamp, _ := time.Parse("2006-01-02", to)
             sort := ParseSort(c, "date")
-            GetEntriesByType(c.Param("entryType"), fromStamp, toStamp, sort, c, &config)
+            code, json := GetEntriesByType(c.Param("entryType"), fromStamp, toStamp, sort, &config, authenticated)
+            c.JSON(code, json)
 		})
 	}
-    
-    
-
-	fmt.Printf("\nListening on port %s\n", config.Port)
-    router.Run(config.Port)
     
     return router, &config
 }
@@ -76,10 +79,17 @@ func LoadAPI() (*gin.Engine, *Config){
 //All other fields are set with sane defaults.
 func ParseSort(c *gin.Context, field string) (Sort) {
     sort := Sort{}
-    sort.Start, _ = strconv.Atoi(c.DefaultQuery("start", "0"))
-    sort.Count, _ = strconv.Atoi(c.DefaultQuery("count", "100000"))
-    sort.Field = c.DefaultQuery("sort", field)
-    sort.Direction = c.DefaultQuery("sortDirection", "")
+    if c == nil {
+        sort.Start = 0
+        sort.Count = 100000
+        sort.Field = field
+        sort.Direction = "asc"
+    }else{
+        sort.Start, _ = strconv.Atoi(c.DefaultQuery("start", "0"))
+        sort.Count, _ = strconv.Atoi(c.DefaultQuery("count", "100000"))
+        sort.Field = c.DefaultQuery("sort", field)
+        sort.Direction = c.DefaultQuery("sortDirection", "asc")
+    }
     return sort
 }
 
