@@ -57,14 +57,14 @@ func (suite *DataEntryTestMongoSuite) Test_DataEntry_MongoSave() {
 	if err != nil {
 		suite.False(true)
 	}
-    from, _ := time.Parse("2006-01-02", "2016-01-01")
-    to, _ := time.Parse("2006-01-02", "2020-01-01")
-    sort := Sort{
-        Start: 0,
-        Count: 1000,
-        Field: "date",
-        Direction: "asc",
-    }
+	from, _ := time.Parse("2006-01-02", "2016-01-01")
+	to, _ := time.Parse("2006-01-02", "2020-01-01")
+	sort := Sort{
+		Start:     0,
+		Count:     1000,
+		Field:     "date",
+		Direction: "asc",
+	}
 	matches, err := GetEntriesByTypeMongo("testing-mongo", from, to, sort, &suite.Config)
 	if err != nil {
 		suite.False(true)
@@ -95,34 +95,34 @@ func (suite *DataEntryTestMongoSuite) Test_DataEntry_MongoDistinct() {
 	if err != nil {
 		suite.False(true)
 	}
-    
-    de2 := DataEntry{}
+
+	de2 := DataEntry{}
 	de2.SQLID = 0
 	de2.MongoID = bson.NewObjectId()
 	de2.EntryType = "testing-mongo-distinct-2"
 	de2.Reference = fmt.Sprintf("%d", r1)
 	de2.EntryCreated = current
 	de2.Notes = "Sample Notes"
-    err = SaveEntryMongo(&de2, &suite.Config)
+	err = SaveEntryMongo(&de2, &suite.Config)
 	if err != nil {
 		suite.False(true)
 	}
-    
+
 	matches, err := GetDistinctEntriesMongo(&suite.Config)
 	if err != nil {
 		suite.False(true)
 	}
 	found1 := false
-    found2 := false
+	found2 := false
 	for _, entry := range matches {
 		if entry == "testing-mongo-distinct-1" && !found1 { //check to see if this one is the first group and the group hasn't been found before
 			found1 = true
 		}
-        if entry == "testing-mongo-distinct-2" && !found2 { //ditto
+		if entry == "testing-mongo-distinct-2" && !found2 { //ditto
 			found2 = true
 		}
 	}
 
 	suite.True(found1)
-    suite.True(found2)
+	suite.True(found2)
 }

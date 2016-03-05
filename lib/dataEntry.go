@@ -36,66 +36,66 @@ func (dataEntry DataEntry) EntryReturnHelper() gin.H {
 }
 
 //SaveEntry saves a new event entry to the database
-func SaveEntry(entryType string, reference string, notes string, config *Config, authenticated bool) (int, gin.H){
+func SaveEntry(entryType string, reference string, notes string, config *Config, authenticated bool) (int, gin.H) {
 	//parse
 	if !authenticated {
-        return 401, gin.H{"status": "Unauthorized"}
-	} 
-    data := DataEntry{}
-    //the id will be set either by the database (SQL) or the function call (mongo)
-    data.EntryType = entryType
-    data.Reference = reference
-    data.EntryCreated = time.Now()
-    data.Notes = notes
+		return 401, gin.H{"status": "Unauthorized"}
+	}
+	data := DataEntry{}
+	//the id will be set either by the database (SQL) or the function call (mongo)
+	data.EntryType = entryType
+	data.Reference = reference
+	data.EntryCreated = time.Now()
+	data.Notes = notes
 
-    //how to save?
-    if config.DatabaseType == "mongo" {
-        err := SaveEntryMongo(&data, config)
-        if err != nil {
-            LogWarning.Println("Invalid post, data not saved")
-            return 500, gin.H{"status": "Could not save that entry"}
-        }
-        dataRet := data.EntryReturnHelper()
-        return 200, gin.H{"status": "inserted", "data": dataRet}
-    }
-    return 501, gin.H{"status":"Other databases not Implemented Yet"}
+	//how to save?
+	if config.DatabaseType == "mongo" {
+		err := SaveEntryMongo(&data, config)
+		if err != nil {
+			LogWarning.Println("Invalid post, data not saved")
+			return 500, gin.H{"status": "Could not save that entry"}
+		}
+		dataRet := data.EntryReturnHelper()
+		return 200, gin.H{"status": "inserted", "data": dataRet}
+	}
+	return 501, gin.H{"status": "Other databases not Implemented Yet"}
 }
 
 //GetEntriesByType gets a list of all entries filtered by a specific type
-func GetEntriesByType(entryType string, from time.Time, to time.Time, sort Sort, config *Config, authenticated bool) (int, gin.H){
+func GetEntriesByType(entryType string, from time.Time, to time.Time, sort Sort, config *Config, authenticated bool) (int, gin.H) {
 	if !authenticated {
-        return 401, gin.H{"status": "Unauthorized"}
-	} 
-    if config.DatabaseType == "mongo" {
-        matches, err := GetEntriesByTypeMongo(entryType, from, to, sort, config)
-        if err != nil {
-            return 500, gin.H{"status": "There was a problem"}
-        } 
-        //loop and build
-        ret := []gin.H{}
-        for _, entry := range matches {
-            ret = append(ret, entry.EntryReturnHelper())
-        }
-        count := len(matches)
-        return 200, gin.H{"status": "OK", "count": count, "data": ret}
+		return 401, gin.H{"status": "Unauthorized"}
 	}
-    return 501, gin.H{"status":"Other databases not Implemented Yet"}
+	if config.DatabaseType == "mongo" {
+		matches, err := GetEntriesByTypeMongo(entryType, from, to, sort, config)
+		if err != nil {
+			return 500, gin.H{"status": "There was a problem"}
+		}
+		//loop and build
+		ret := []gin.H{}
+		for _, entry := range matches {
+			ret = append(ret, entry.EntryReturnHelper())
+		}
+		count := len(matches)
+		return 200, gin.H{"status": "OK", "count": count, "data": ret}
+	}
+	return 501, gin.H{"status": "Other databases not Implemented Yet"}
 }
 
-//GetDistinctEntries gets the distinct entries 
-func GetDistinctEntries(config *Config, authenticated bool) (int, gin.H){
+//GetDistinctEntries gets the distinct entries
+func GetDistinctEntries(config *Config, authenticated bool) (int, gin.H) {
 	if !authenticated {
-        return 401, gin.H{"status": "Unauthorized"}
-	} 
-    
-    if config.DatabaseType == "mongo" {
-        matches, err := GetDistinctEntriesMongo(config)
-        if err != nil {
-            return 500, gin.H{"status": "There was a problem"}
-        }
-        //loop and build
-        count := len(matches)
-        return 200, gin.H{"status": "OK", "count": count, "data": matches}
-    }
-    return 501, gin.H{"status":"Other databases not Implemented Yet"}
+		return 401, gin.H{"status": "Unauthorized"}
+	}
+
+	if config.DatabaseType == "mongo" {
+		matches, err := GetDistinctEntriesMongo(config)
+		if err != nil {
+			return 500, gin.H{"status": "There was a problem"}
+		}
+		//loop and build
+		count := len(matches)
+		return 200, gin.H{"status": "OK", "count": count, "data": matches}
+	}
+	return 501, gin.H{"status": "Other databases not Implemented Yet"}
 }

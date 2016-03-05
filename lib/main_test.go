@@ -3,7 +3,7 @@ package goan
 import (
 	"os"
 	"testing"
-    
+
 	"github.com/stretchr/testify/suite"
 )
 
@@ -35,7 +35,6 @@ func (suite *TestSuite) TearDownSuite() {
 		DeleteAllTestingEntriesMongo("testing-data", &suite.Config)
 	}
 }
-
 
 //Test_Suite_Run runs the test suite
 func Test_Suite_Run(t *testing.T) {
