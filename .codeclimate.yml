@@ -1,3 +1,7 @@
 engines:
   golint:
-    enabled:true
+    enabled: true
+  fixme:
+    enabled: true
+ratings:
+  paths: []
